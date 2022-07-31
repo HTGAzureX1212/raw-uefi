@@ -1,2 +1,3 @@
 # raw-uefi
-UEFI Specification Definitions
+
+UEFI Specification Definitions written in pure Rust.
