@@ -28,6 +28,8 @@ pub struct EFI_RUNTIME_SERVICES {
 
     pub GetTime: EFI_RUNTIME_GET_TIME,
     pub SetTime: EFI_RUNTIME_SET_TIME,
+    pub GetWakeupTime: EFI_RUNTIME_GET_WAKEUP_TIME,
+    pub SetWakeupTime: EFI_RUNTIME_SET_WAKEUP_TIME,
 }
 
 #[repr(C)]
@@ -87,5 +89,16 @@ pub type EFI_RUNTIME_GET_TIME = unsafe extern "efiapi" fn(
 ) -> EFI_STATUS;
 
 pub type EFI_RUNTIME_SET_TIME = unsafe extern "efiapi" fn(
+    Time: *mut EFI_TIME,
+) -> EFI_STATUS;
+
+pub type EFI_RUNTIME_GET_WAKEUP_TIME = unsafe extern "efiapi" fn(
+    Enabled: *mut BOOLEAN,
+    Pending: *mut BOOLEAN,
+    Time: *mut EFI_TIME,
+) -> EFI_STATUS;
+
+pub type EFI_RUNTIME_SET_WAKEUP_TIME = unsafe extern "efiapi" fn(
+    Enable: BOOLEAN,
     Time: *mut EFI_TIME,
 ) -> EFI_STATUS;
