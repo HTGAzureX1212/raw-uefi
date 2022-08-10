@@ -17,16 +17,10 @@
  * along with RawUEFI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{UINT32, UINT64};
-
-pub mod configuration;
-pub mod system;
+use crate::types::{EFI_GUID, VOID};
 
 #[repr(C)]
-pub struct EFI_TABLE_HEADER {
-    pub Signature: UINT64,
-    pub Revision: UINT32,
-    pub HeaderSize: UINT32,
-    pub CRC32: UINT32,
-    pub Reserved: UINT32,
+pub struct EFI_CONFIGURATION_TABLE {
+    pub VendorGuid: EFI_GUID,
+    pub VendorTable: *mut VOID,
 }

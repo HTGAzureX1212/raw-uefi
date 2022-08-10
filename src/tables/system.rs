@@ -22,6 +22,7 @@ use crate::protocols::console::simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL
 use crate::protocols::console::simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 use crate::services::boot::EFI_BOOT_SERVICES;
 use crate::services::runtime::EFI_RUNTIME_SERVICES;
+use crate::tables::configuration::EFI_CONFIGURATION_TABLE;
 use crate::tables::EFI_TABLE_HEADER;
 
 #[repr(C)]
@@ -38,4 +39,5 @@ pub struct EFI_SYSTEM_TABLE {
     pub RuntimeServices: *mut EFI_RUNTIME_SERVICES,
     pub BootServices: *mut EFI_BOOT_SERVICES,
     pub NumberOfTableEntries: UINTN,
+    pub ConfigurationTable: *mut EFI_CONFIGURATION_TABLE,
 }
