@@ -18,7 +18,8 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_PHYSICAL_ADDRESS, EFI_STATUS, EFI_TPL, EFI_VIRTUAL_ADDRESS, UINT32, UINT64, UINTN, VOID};
+use crate::tables::system::EFI_SYSTEM_TABLE;
+use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_PHYSICAL_ADDRESS, EFI_STATUS, EFI_TPL, EFI_VIRTUAL_ADDRESS, UINT32, UINT64, UINT8, UINTN, VOID};
 
 #[repr(C)]
 pub struct EFI_BOOT_SERVICES {
@@ -64,6 +65,25 @@ pub struct EFI_BOOT_SERVICES {
     pub LocateProtocol: EFI_BOOT_LOCATE_PROTOCOL,
     pub InstallMultipleProtocolInterfaces: EFI_BOOT_INSTALL_MULTIPLE_PROTOCOL_INTERFACES,
     pub UnnstallMultipleProtocolInterfaces: EFI_BOOT_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES,
+
+    pub LoadImage: EFI_BOOT_IMAGE_LOAD,
+    pub StartImage: EFI_BOOT_IMAGE_START,
+    pub UnloadImage: EFI_BOOT_IMAGE_UNLOAD,
+
+    pub Exit: EFI_BOOT_EXIT,
+    pub ExitBootServices: EFI_BOOT_EXIT_BOOT_SERVICES,
+
+    pub SetWatchdogTimer: EFI_BOOT_SET_WATCHDOG_TIMER,
+    pub Stall: EFI_BOOT_STALL,
+
+    pub CopyMem: EFI_BOOT_COPY_MEM,
+    pub SetMem: EFI_BOOT_SET_MEM,
+
+    pub GetNextMonotonicCount: EFI_BOOT_GET_NEXT_MONOTONIC_COUNT,
+
+    pub InstallConfigurationTable: EFI_BOOT_INSTALL_CONFIGURATION_TABLE,
+
+    pub CalculateCrc32: EFI_BOOT_CALCULATE_CRC32,
 }
 
 #[repr(C)]
@@ -130,6 +150,11 @@ pub struct EFI_OPEN_PROTOCOL_INFORMATION_ENTRY {
     pub Attributes: UINT32,
     pub OpenCount: UINT32,
 }
+
+pub type EFI_IMAGE_ENTRY_POINT = unsafe extern "efiapi" fn(
+    ImageHandle: EFI_HANDLE,
+    SystemTable: EFI_SYSTEM_TABLE,
+);
 
 pub type EFI_EVENT_NOTIFY = unsafe extern "efiapi" fn(
     Event: EFI_EVENT,
@@ -328,3 +353,71 @@ pub type EFI_BOOT_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES = unsafe extern "efiapi
     ...
 ) -> EFI_STATUS;
 
+pub type EFI_BOOT_IMAGE_LOAD = unsafe extern "efiapi" fn(
+    BootPolicy: BOOLEAN,
+    ParentImageHandle: EFI_HANDLE,
+    DevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
+    SourceBuffer: *mut VOID,
+    SourceSize: UINTN,
+    ImageHandle: *mut EFI_HANDLE,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_IMAGE_START = unsafe extern "efiapi" fn(
+    ImageHandle: EFI_HANDLE,
+    ExitDataSize: *mut UINTN,
+    ExitData: *mut *mut CHAR16,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_IMAGE_UNLOAD = unsafe extern "efiapi" fn(
+    ImageHandle: EFI_HANDLE
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_EXIT = unsafe extern "efiapi" fn(
+    ImageHandle: EFI_HANDLE,
+    ExitStatus: EFI_STATUS,
+    ExitDataSize: UINTN,
+    ExitData: *mut CHAR16,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_EXIT_BOOT_SERVICES = unsafe extern "efiapi" fn(
+    ImageHandle: EFI_HANDLE,
+    MapKey: UINTN,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_SET_WATCHDOG_TIMER = unsafe extern "efiapi" fn(
+    Timeout: UINTN,
+    WatchdogCode: UINT64,
+    DataSize: UINTN,
+    WatchdogData: *mut CHAR16,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_STALL = unsafe extern "efiapi" fn(
+    Microseconds: UINTN,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_COPY_MEM = unsafe extern "efiapi" fn(
+    Destination: *mut VOID,
+    Source: *mut VOID,
+    Length: UINTN,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_SET_MEM = unsafe extern "efiapi" fn(
+    Buffer: *mut VOID,
+    Size: UINTN,
+    Value: UINT8,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_GET_NEXT_MONOTONIC_COUNT = unsafe extern "efiapi" fn(
+    Count: *mut UINT64
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_INSTALL_CONFIGURATION_TABLE = unsafe extern "efiapi" fn(
+    Guid: *mut EFI_GUID,
+    Table: *mut VOID,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_CALCULATE_CRC32 = unsafe extern "efiapi" fn(
+    Data: *mut VOID,
+    DataSize: UINTN,
+    Crc32: *mut UINT32
+) -> EFI_STATUS;
