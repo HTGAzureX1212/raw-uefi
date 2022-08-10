@@ -17,6 +17,7 @@
  * along with RawUEFI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::types::{EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_PHYSICAL_ADDRESS, EFI_STATUS, EFI_TPL, EFI_VIRTUAL_ADDRESS, UINT32, UINT64, UINTN, VOID};
 
 #[repr(C)]
@@ -43,6 +44,12 @@ pub struct EFI_BOOT_SERVICES {
     pub InstallProtocolInterface: EFI_BOOT_INSTALL_PROTOCOL_INTERFACE,
     pub UninstallProtocolInterface: EFI_BOOT_UNINSTALL_PROTOCOL_INTERFACE,
     pub ReinstallProtocolInterface: EFI_BOOT_REINSTALL_PROTOCOL_INTERFACE,
+
+    pub RegisterProtocolVerify: EFI_BOOT_REGISTER_PROTOCOL_NOTIFY,
+
+    pub LocateHandle: EFI_BOOT_LOCATE_HANDLE,
+    pub HandleProtocol: EFI_BOOT_HANDLE_PROTOCOL,
+    pub LocateDevicePath: EFI_BOOT_LOCATE_DEVICE_PATH,
 }
 
 #[repr(C)]
@@ -56,6 +63,13 @@ pub enum EFI_ALLOCATE_TYPE {
 #[repr(C)]
 pub enum EFI_INTERFACE_TYPE {
     EFI_NATIVE_INTERFACE,
+}
+
+#[repr(C)]
+pub enum EFI_LOCATE_SEARCH_TYPE {
+    AllHandles,
+    ByRegisterNotify,
+    ByProtocol,
 }
 
 #[repr(C)]
@@ -197,4 +211,30 @@ pub type EFI_BOOT_REINSTALL_PROTOCOL_INTERFACE = unsafe extern "efiapi" fn(
     Protocol: *mut EFI_GUID,
     OldInterface: *mut VOID,
     NewInterface: *mut VOID,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_REGISTER_PROTOCOL_NOTIFY = unsafe extern "efiapi" fn(
+    Protocol: *mut EFI_GUID,
+    Event: EFI_EVENT,
+    Registration: *mut *mut VOID,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_LOCATE_HANDLE = unsafe extern "efiapi" fn(
+    SearchType: EFI_LOCATE_SEARCH_TYPE,
+    Protocol: *mut EFI_GUID,
+    SearchKey: *mut VOID,
+    BufferSize: *mut UINTN,
+    Buffer: *mut EFI_HANDLE,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_HANDLE_PROTOCOL = unsafe extern "efiapi" fn(
+    Handle: EFI_HANDLE,
+    Protocol: *mut EFI_GUID,
+    Interface: *mut *mut VOID,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_LOCATE_DEVICE_PATH = unsafe extern "efiapi" fn(
+    Protocol: *mut EFI_GUID,
+    DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
+    Device: *mut EFI_HANDLE,
 ) -> EFI_STATUS;
