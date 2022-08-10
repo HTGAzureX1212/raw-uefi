@@ -18,7 +18,7 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_PHYSICAL_ADDRESS, EFI_STATUS, EFI_TPL, EFI_VIRTUAL_ADDRESS, UINT32, UINT64, UINTN, VOID};
+use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_PHYSICAL_ADDRESS, EFI_STATUS, EFI_TPL, EFI_VIRTUAL_ADDRESS, UINT32, UINT64, UINTN, VOID};
 
 #[repr(C)]
 pub struct EFI_BOOT_SERVICES {
@@ -50,6 +50,20 @@ pub struct EFI_BOOT_SERVICES {
     pub LocateHandle: EFI_BOOT_LOCATE_HANDLE,
     pub HandleProtocol: EFI_BOOT_HANDLE_PROTOCOL,
     pub LocateDevicePath: EFI_BOOT_LOCATE_DEVICE_PATH,
+
+    pub OpenProtocol: EFI_BOOT_OPEN_PROTOCOL,
+    pub CloseProtocol: EFI_BOOT_CLOSE_PROTOCOL,
+    pub OpenProtocolInformation: EFI_BOOT_OPEN_PROTOCOL_INFORMATION,
+
+    pub ConnectController: EFI_BOOT_CONNECT_CONTROLLER,
+    pub DisconnectController: EFI_BOOT_DISCONNECT_CONTROLLER,
+
+    pub ProtocolsPerHandle: EFI_BOOT_PROTOCOLS_PER_HANDLE,
+    pub LocateHandleBuffer: EFI_BOOT_LOCATE_HANDLE_BUFFER,
+
+    pub LocateProtocol: EFI_BOOT_LOCATE_PROTOCOL,
+    pub InstallMultipleProtocolInterfaces: EFI_BOOT_INSTALL_MULTIPLE_PROTOCOL_INTERFACES,
+    pub UnnstallMultipleProtocolInterfaces: EFI_BOOT_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES,
 }
 
 #[repr(C)]
@@ -107,6 +121,14 @@ pub struct EFI_MEMORY_DESCRIPTOR {
     pub VirtualStart: EFI_VIRTUAL_ADDRESS,
     pub NumberOfPages: UINT64,
     pub Attribute: UINT64,
+}
+
+#[repr(C)]
+pub struct EFI_OPEN_PROTOCOL_INFORMATION_ENTRY {
+    pub AgentHandle: EFI_HANDLE,
+    pub ControllerHandle: EFI_HANDLE,
+    pub Attributes: UINT32,
+    pub OpenCount: UINT32,
 }
 
 pub type EFI_EVENT_NOTIFY = unsafe extern "efiapi" fn(
@@ -238,3 +260,71 @@ pub type EFI_BOOT_LOCATE_DEVICE_PATH = unsafe extern "efiapi" fn(
     DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
     Device: *mut EFI_HANDLE,
 ) -> EFI_STATUS;
+
+pub type EFI_BOOT_OPEN_PROTOCOL = unsafe extern "efiapi" fn(
+    Handle: EFI_HANDLE,
+    Protocol: *mut EFI_GUID,
+    Interface: *mut *mut VOID,
+    AgentHandle: EFI_HANDLE,
+    ControllerHandle: EFI_HANDLE,
+    Attributes: UINT32,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_CLOSE_PROTOCOL = unsafe extern "efiapi" fn(
+    Handle: EFI_HANDLE,
+    Protocol: *mut EFI_GUID,
+    AgentHandle: EFI_HANDLE,
+    ControllerHandle: EFI_HANDLE,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_OPEN_PROTOCOL_INFORMATION = unsafe extern "efiapi" fn(
+    Handle: EFI_HANDLE,
+    Protocol: *mut EFI_GUID,
+    EntryBuffer: *mut *mut EFI_OPEN_PROTOCOL_INFORMATION_ENTRY,
+    EntryCount: *mut UINTN,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_CONNECT_CONTROLLER = unsafe extern "efiapi" fn(
+    ControllerHandle: EFI_HANDLE,
+    DriverImageHandle: *mut EFI_HANDLE,
+    RemainingDevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
+    Recursive: BOOLEAN
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_DISCONNECT_CONTROLLER = unsafe extern "efiapi" fn(
+    ControllerHandle: EFI_HANDLE,
+    DriverImageHandle: EFI_HANDLE,
+    ChildHandle: EFI_HANDLE,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_PROTOCOLS_PER_HANDLE = unsafe extern "efiapi" fn(
+    Handle: EFI_HANDLE,
+    ProtocolBuffer: *mut *mut *mut EFI_GUID,
+    ProtocolBufferCount: *mut UINTN,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_LOCATE_HANDLE_BUFFER = unsafe extern "efiapi" fn(
+    SearchType: EFI_LOCATE_SEARCH_TYPE,
+    Protocol: *mut EFI_GUID,
+    SearchKey: *mut VOID,
+    NoHandles: *mut UINTN,
+    Buffer: *mut *mut EFI_HANDLE,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_LOCATE_PROTOCOL = unsafe extern "efiapi" fn(
+    Protocol: *mut EFI_GUID,
+    Registration: *mut VOID,
+    Interface: *mut *mut VOID,
+) -> EFI_STATUS;
+
+pub type EFI_BOOT_INSTALL_MULTIPLE_PROTOCOL_INTERFACES = unsafe extern "efiapi" fn(
+    Handle: *mut EFI_HANDLE,
+    ...
+) -> EFI_STATUS;
+
+
+pub type EFI_BOOT_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES = unsafe extern "efiapi" fn(
+    Handle: *mut EFI_HANDLE,
+    ...
+) -> EFI_STATUS;
+

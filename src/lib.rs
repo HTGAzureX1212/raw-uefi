@@ -22,6 +22,7 @@
 #![allow(non_upper_case_globals)]
 
 #![feature(abi_efiapi)]
+#![feature(c_variadic)]
 
 #![no_std]
 
