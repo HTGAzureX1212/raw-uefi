@@ -17,9 +17,10 @@
  * along with RawUEFI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{CHAR16, EFI_HANDLE, UINT32};
+use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINTN};
 use crate::protocols::console::simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
 use crate::protocols::console::simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
+use crate::services::boot::EFI_BOOT_SERVICES;
 use crate::services::runtime::EFI_RUNTIME_SERVICES;
 use crate::tables::EFI_TABLE_HEADER;
 
@@ -35,4 +36,6 @@ pub struct EFI_SYSTEM_TABLE {
     pub StandardErrorHandle: EFI_HANDLE,
     pub StdErr: *mut EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL,
     pub RuntimeServices: *mut EFI_RUNTIME_SERVICES,
+    pub BootServices: *mut EFI_BOOT_SERVICES,
+    pub NumberOfTableEntries: UINTN,
 }

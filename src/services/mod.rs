@@ -17,4 +17,5 @@
  * along with RawUEFI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+pub mod boot;
 pub mod runtime;

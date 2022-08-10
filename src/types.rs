@@ -82,3 +82,6 @@ pub union EFI_IP_ADDRESS {
     pub v4: EFI_IPv4_ADDRESS,
     pub v6: EFI_IPv6_ADDRESS,
 }
+
+pub type EFI_PHYSICAL_ADDRESS = UINT64;
+pub type EFI_VIRTUAL_ADDRESS = UINT64;
